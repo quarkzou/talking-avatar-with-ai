@@ -1,6 +1,9 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import {v4 as uuidv4} from "uuid";
+import CryptoJSSHA1 from "crypto-js/sha1";
+import CryptoJSEncHex from "crypto-js/enc-hex";
 
-const backendUrl = "http://localhost:3000";
+const backendUrl = "http://43.133.65.177:8080/api";
 
 const SpeechContext = createContext();
 
@@ -32,6 +35,7 @@ export const SpeechProvider = ({ children }) => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
           },
           body: JSON.stringify({ audio: base64Audio }),
         });
@@ -82,17 +86,44 @@ export const SpeechProvider = ({ children }) => {
     }
   };
 
+  const computeSign = (ts, uuid, token) => {
+    const concat = ts + uuid + token;
+    return CryptoJSSHA1(concat).toString(CryptoJSEncHex)
+  };
+
   const tts = async (message) => {
     setLoading(true);
     try {
-      const data = await fetch(`${backendUrl}/tts`, {
+      const messageList = [
+        {
+          role: "system",
+          content: "你的名字叫Leo，你是一个学习小助手。",
+        },
+      ];
+
+      messageList.push({role: "user", content: message});
+
+      const ts = new Date().getTime().toString();
+      const nonce = uuidv4();
+      const token = 'qsdf12rtyu907816'
+      const sign = computeSign(ts, nonce, token)
+
+      const data = await fetch(`api/chat`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/json; charset=utf-8",
+          "ts": ts,
+          "nonce": nonce,
+          "sign": sign,
         },
-        body: JSON.stringify({ message }),
+        body: JSON.stringify({
+                model: "gpt-4o",
+                // stream: true,
+                messages: messageList,
+            }),
       });
-      const response = (await data.json()).messages;
+      const response = (await data.json()).choices[0].message.content;
+      console.log(response);
       setMessages((messages) => [...messages, ...response]);
     } catch (error) {
       console.error(error);
