@@ -49,8 +49,8 @@ export const ChatInterface = ({ hidden, ...props }) => {
         </button>
 
         <input
-          className="w-full placeholder:text-gray-800 placeholder:italic p-4 rounded-md bg-opacity-50 bg-white backdrop-blur-md"
-          placeholder="Type a message..."
+          className="w-full placeholder:text-gray-300 placeholder:italic p-4 rounded-md bg-opacity-50 bg-white backdrop-blur-md text-white"
+          placeholder="输入你想说的话……"
           ref={input}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
@@ -61,11 +61,11 @@ export const ChatInterface = ({ hidden, ...props }) => {
         <button
           disabled={loading || message}
           onClick={sendMessage}
-          className={`bg-gray-500 hover:bg-gray-600 text-white p-4 px-10 font-semibold uppercase rounded-md ${
+          className={`bg-gray-500 hover:bg-gray-600 text-white p-4 px-10 w-36 font-semibold uppercase rounded-md ${
             loading || message ? "cursor-not-allowed opacity-30" : ""
           }`}
         >
-          Send
+          发送
         </button>
       </div>
     </div>
