@@ -12,6 +12,7 @@ export const SpeechProvider = ({ children }) => {
   const [mediaRecorder, setMediaRecorder] = useState(null);
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState();
+  const [response, setResponse] = useState();
   const [loading, setLoading] = useState(false);
 
   let chunks = [];
@@ -97,7 +98,7 @@ export const SpeechProvider = ({ children }) => {
       const messageList = [
         {
           role: "system",
-          content: "你的名字叫Leo，你是一个学习小助手。",
+          content: "你的名字叫小路，你是一个学习小助手。如果回答内容比较长，需要格式化你的回答。",
         },
       ];
 
@@ -124,7 +125,8 @@ export const SpeechProvider = ({ children }) => {
       });
       const response = (await data.json()).choices[0].message.content;
       console.log(response);
-      setMessages((messages) => [...messages, ...response]);
+      setResponse(response);
+      // setMessages((messages) => [...messages, ...response]);
     } catch (error) {
       console.error(error);
     } finally {
@@ -152,6 +154,7 @@ export const SpeechProvider = ({ children }) => {
         recording,
         tts,
         message,
+        response,
         onMessagePlayed,
         loading,
       }}
