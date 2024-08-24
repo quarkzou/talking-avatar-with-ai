@@ -1,7 +1,8 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import {v4 as uuidv4} from "uuid";
+import { v4 as uuidv4 } from "uuid";
 import CryptoJSSHA1 from "crypto-js/sha1";
 import CryptoJSEncHex from "crypto-js/enc-hex";
+import { voiceToText } from "./tencentcloudHelper"
 
 const backendUrl = "http://43.133.65.177:8080/api";
 
@@ -32,16 +33,19 @@ export const SpeechProvider = ({ children }) => {
       const base64Audio = reader.result.split(",")[1];
       setLoading(true);
       try {
-        const data = await fetch(`${backendUrl}/sts`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*",
-          },
-          body: JSON.stringify({ audio: base64Audio }),
-        });
-        const response = (await data.json()).messages;
-        setMessages((messages) => [...messages, ...response]);
+
+        voiceToText(1, 'wav', '', base64Audio)
+
+        // const data = await fetch(`${backendUrl}/sts`, {
+        //   method: "POST",
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //     "Access-Control-Allow-Origin": "*",
+        //   },
+        //   body: JSON.stringify({ audio: base64Audio }),
+        // });
+        // const response = (await data.json()).messages;
+        // setMessages((messages) => [...messages, ...response]);
       } catch (error) {
         console.error(error);
       } finally {
@@ -102,7 +106,7 @@ export const SpeechProvider = ({ children }) => {
         },
       ];
 
-      messageList.push({role: "user", content: message});
+      messageList.push({ role: "user", content: message });
 
       const ts = new Date().getTime().toString();
       const nonce = uuidv4();
@@ -118,10 +122,10 @@ export const SpeechProvider = ({ children }) => {
           "sign": sign,
         },
         body: JSON.stringify({
-                model: "gpt-4o",
-                // stream: true,
-                messages: messageList,
-            }),
+          model: "gpt-4o",
+          // stream: true,
+          messages: messageList,
+        }),
       });
       const response = (await data.json()).choices[0].message.content;
       console.log(response);

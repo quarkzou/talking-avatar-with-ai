@@ -10,7 +10,7 @@ export const Scenario = () => {
   return (
     <>
       <CameraControls ref={cameraControls} />
-      {/* <Environment preset="sunset" /> */}
+      <Environment preset="sunset" />
       <Avatar />
     </>
   );
