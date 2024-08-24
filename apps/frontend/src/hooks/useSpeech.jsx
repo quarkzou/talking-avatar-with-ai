@@ -2,9 +2,9 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import CryptoJSSHA1 from "crypto-js/sha1";
 import CryptoJSEncHex from "crypto-js/enc-hex";
-import { voiceToText } from "./tencentcloudHelper"
 
 const backendUrl = "http://43.133.65.177:8080/api";
+const token = 'qsdf12rtyu907816'
 
 const SpeechContext = createContext();
 
@@ -33,18 +33,22 @@ export const SpeechProvider = ({ children }) => {
       const base64Audio = reader.result.split(",")[1];
       setLoading(true);
       try {
+        const ts = new Date().getTime().toString();
+        const nonce = uuidv4();
+        const sign = computeSign(ts, nonce, token)
 
-        voiceToText(1, 'wav', '', base64Audio)
-
-        // const data = await fetch(`${backendUrl}/sts`, {
-        //   method: "POST",
-        //   headers: {
-        //     "Content-Type": "application/json",
-        //     "Access-Control-Allow-Origin": "*",
-        //   },
-        //   body: JSON.stringify({ audio: base64Audio }),
-        // });
-        // const response = (await data.json()).messages;
+        const data = await fetch(`api/audio`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json; charset=utf-8",
+            "ts": ts,
+            "nonce": nonce,
+            "sign": sign,
+          },
+          body: JSON.stringify({ audio: base64Audio }),
+        });
+        const response = (await data.json());
+        console.log(response)
         // setMessages((messages) => [...messages, ...response]);
       } catch (error) {
         console.error(error);
@@ -110,7 +114,6 @@ export const SpeechProvider = ({ children }) => {
 
       const ts = new Date().getTime().toString();
       const nonce = uuidv4();
-      const token = 'qsdf12rtyu907816'
       const sign = computeSign(ts, nonce, token)
 
       const data = await fetch(`api/chat`, {
