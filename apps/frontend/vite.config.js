@@ -8,7 +8,7 @@ export default defineConfig({
     port: 5173, // 配置服务器端口
     proxy: {
       '/api': {
-        target: 'http://43.133.65.177:8080/',
+        target: 'http://43.133.65.177:8282/',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '/ai')
       }
