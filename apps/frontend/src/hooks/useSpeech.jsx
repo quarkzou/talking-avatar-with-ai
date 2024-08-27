@@ -13,7 +13,7 @@ export const SpeechProvider = ({ children }) => {
   const [mediaRecorder, setMediaRecorder] = useState(null);
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState();
-  const [response, setResponse] = useState();
+  const [responseText, setResponseText] = useState();
   const [loading, setLoading] = useState(false);
 
   let chunks = [];
@@ -50,7 +50,6 @@ export const SpeechProvider = ({ children }) => {
         const response = (await data.json());
         console.log(response)
         tts(response.message);
-        // setMessages((messages) => [...messages, ...response]);
       } catch (error) {
         console.error(error);
       } finally {
@@ -117,7 +116,7 @@ export const SpeechProvider = ({ children }) => {
       const nonce = uuidv4();
       const sign = computeSign(ts, nonce, token)
 
-      const data = await fetch(`api/chat`, {
+      const data = await fetch(`api/avatarchat`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json; charset=utf-8",
@@ -131,10 +130,10 @@ export const SpeechProvider = ({ children }) => {
           messages: messageList,
         }),
       });
-      const response = (await data.json()).choices[0].message.content;
-      console.log(response);
-      setResponse(response);
-      // setMessages((messages) => [...messages, ...response]);
+      const resp = (await data.json())
+      const response = resp.messages;
+      setResponseText(response[0].text);
+      setMessages((messages) => [...messages, ...response]);
     } catch (error) {
       console.error(error);
     } finally {
@@ -162,7 +161,7 @@ export const SpeechProvider = ({ children }) => {
         recording,
         tts,
         message,
-        response,
+        responseText,
         onMessagePlayed,
         loading,
       }}

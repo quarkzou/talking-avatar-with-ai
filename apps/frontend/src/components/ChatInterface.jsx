@@ -3,7 +3,7 @@ import { useSpeech } from "../hooks/useSpeech";
 
 export const ChatInterface = ({ hidden, ...props }) => {
   const input = useRef();
-  const { tts, loading, message, response, startRecording, stopRecording, recording } = useSpeech();
+  const { tts, loading, message, responseText, startRecording, stopRecording, recording } = useSpeech();
 
   const sendMessage = () => {
     const text = input.current.value;
@@ -21,7 +21,7 @@ export const ChatInterface = ({ hidden, ...props }) => {
       <div className="self-start backdrop-blur-md bg-white bg-opacity-50 p-4 rounded-lg">
         <h1 className="font-black text-xl text-gray-700">小路</h1>
         <p className="text-gray-600 whitespace-pre-line">
-          {loading ? "加载中..." : (response ? response : "大家好，我叫小路。很高兴认识你！")}
+          {loading ? "加载中..." : (responseText ? responseText : "大家好，我叫小路。很高兴认识你！")}
         </p>
       </div>
       <div className="w-full flex flex-col items-end justify-center gap-4"></div>
