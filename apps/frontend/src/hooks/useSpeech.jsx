@@ -49,7 +49,7 @@ export const SpeechProvider = ({ children }) => {
         });
         const response = (await data.json());
         console.log(response)
-        tts(response.message);
+        await tts(response.message);
       } catch (error) {
         console.error(error);
       } finally {
